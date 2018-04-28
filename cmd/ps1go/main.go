@@ -77,6 +77,19 @@ func generate(input string) (string) {
 	}
 
 	params := &Params{
+		/*
+		Ideas for other fields:
+
+		- date
+		- time
+		- quotes file
+		- news headline??
+		- mercurial/svn/fossil/ branch info
+		- uncommitted changes
+		- difference between origin and upstream commits
+		- summary of 'ls' info? e.g. number of files and dirs
+		- shortened version of path, e.g. 1 or 2 chars for each level?
+		 */
 		Branch:     gitBranchOrHash(),
 		Virtualenv: virtualenv(),
 	}
