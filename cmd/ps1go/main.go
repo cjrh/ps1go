@@ -4,6 +4,12 @@ being in a branch or virtualenv:
 
 $ ../ps1go '{{.Virtualenv}} -- {{.Branch}} $'
 
+
+Shell path: "G:\Programs\Git\bin\sh.exe" -login -i
+
+See example of running multiple subprocesses in goroutines:
+https://gist.github.com/proudlygeek/4a9355bad16a62025a46
+
 */
 
 package main
@@ -16,10 +22,9 @@ import (
 	"bytes"
 	"os/exec"
 	"strings"
-	// TODO: colorable by mattn does not properly support cygwin-type terms yet.
-	//"github.com/fatih/color"
-	"fmt"
+
 	"path/filepath"
+	"fmt"
 )
 
 func runCommand(cmdline string) (string) {
@@ -70,46 +75,79 @@ func virtualenv() (string) {
 }
 
 func generate(input string) (string) {
+	/*
+	Ideas for other fields:
 
-	type Params struct {
-		Branch string
-		Virtualenv string
-	}
+	- date
+	- time
+	- quotes file
+	- news headline??
+	- mercurial/svn/fossil/ branch info
+	- uncommitted changes
+	- difference between origin and upstream commits
+	- summary of 'ls' info? e.g. number of files and dirs
+	- shortened version of path, e.g. 1 or 2 chars for each level?
+	 */
 
-	params := &Params{
-		/*
-		Ideas for other fields:
+	m := map[string]string{
+		"Branch":     gitBranchOrHash(),
+		"Virtualenv": virtualenv(),
 
-		- date
-		- time
-		- quotes file
-		- news headline??
-		- mercurial/svn/fossil/ branch info
-		- uncommitted changes
-		- difference between origin and upstream commits
-		- summary of 'ls' info? e.g. number of files and dirs
-		- shortened version of path, e.g. 1 or 2 chars for each level?
-		 */
-		Branch:     gitBranchOrHash(),
-		Virtualenv: virtualenv(),
+		"Reset": "\x1b[0m",
+
+		"Bold":       "\x1b[1m",
+		"Dim":        "\x1b[2m",
+		"Underlined": "\x1b[4m",
+		"Blink":      "\x1b[5m",
+		"Reverse":    "\x1b[7m",
+		"Hidden":     "\x1b[8m",
+
+		"Default":        "\x1b[39m",
+		"Black":          "\x1b[30m",
+		"Red":            "\x1b[31m",
+		"Green":          "\x1b[32m",
+		"Yellow":         "\x1b[33m",
+		"Blue":           "\x1b[34m",
+		"Magenta":        "\x1b[35m",
+		"Cyan":           "\x1b[36m",
+		"Light_gray	": "\x1b[37m",
+		"Dark_gray":      "\x1b[90m",
+		"Light_red":      "\x1b[91m",
+		"Light_green":    "\x1b[92m",
+		"Light_yellow":   "\x1b[93m",
+		"Light_blue":     "\x1b[94m",
+		"Light_magenta":  "\x1b[95m",
+		"Light_cyan":     "\x1b[96m",
+		"White":          "\x1b[97m",
 	}
 
 	var msg bytes.Buffer
-	tmpl, err := template.New("ps1").Parse(input)
-	if err != nil { panic(err) }
-	err = tmpl.Execute(&msg, params)
-	if err != nil { panic(err)}
+	// Force a reset at the end.
+	tmpl, err := template.New("ps1").Parse(input + m["Reset"])
+	if err != nil {
+		panic(err)
+	}
+
+	err = tmpl.Execute(&msg, m)
+	if err != nil {
+		panic(err)
+	}
 
 	return msg.String()
 }
 
 func main() {
+	fmt.Println("\x1b[31;1mHello, World!\x1b[0m")
 	app := cli.NewApp()
 	app.Name = "ps1go"
 	app.Usage = "PS1 prompt generator"
-	app.Action = func (c *cli.Context) {
+	app.Action = func(c *cli.Context) {
 		prompt := generate(c.Args().Get(0))
+		// The STRING \x1b must be replaced with the BYTES 0x1B, which is ESC.
+		// This allows the user to specify formatting information manually.
+		prompt = strings.Replace(prompt, `\x1b`, "\x1b", -1)
 		fmt.Print(prompt)
+		//os.Stdout.Write([]byte(prompt))
 	}
 
 	err := app.Run(os.Args)
