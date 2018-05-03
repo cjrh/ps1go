@@ -119,6 +119,25 @@ func generate(input string) (string) {
 		"Light_magenta":  "\x1b[95m",
 		"Light_cyan":     "\x1b[96m",
 		"White":          "\x1b[97m",
+
+		// Backgrounds
+		"bgDefault":       "\x1b[49m",
+		"bgBlack":         "\x1b[40m",
+		"bgRed":           "\x1b[41m",
+		"bgGreen":         "\x1b[42m",
+		"bgYellow":        "\x1b[43m",
+		"bgBlue":          "\x1b[44m",
+		"bgMagenta":       "\x1b[45m",
+		"bgCyan":          "\x1b[46m",
+		"bgLight_gray":    "\x1b[47m",
+		"bgDark_gray":     "\x1b[100m",
+		"bgLight_red":     "\x1b[101m",
+		"bgLight_green":   "\x1b[102m",
+		"bgLight_yellow":  "\x1b[103m",
+		"bgLight_blue":    "\x1b[104m",
+		"bgLight_magenta": "\x1b[105m",
+		"bgLight_cyan":    "\x1b[106m",
+		"bgWhite":         "\x1b[107m",
 	}
 
 	var msg bytes.Buffer
