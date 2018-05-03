@@ -50,5 +50,5 @@ deactivate
 echo -e '\n'
 
 echo "Conditional with color decoration (not activated) BASH MULTILINE"
-../ps1go "$VENV{{.Branch}} \$ "
+../ps1go "$VENV{{.Branch}} \$(jobs) \$ "
 echo -e '\n'

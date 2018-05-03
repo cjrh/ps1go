@@ -10,6 +10,9 @@ Shell path: "G:\Programs\Git\bin\sh.exe" -login -i
 See example of running multiple subprocesses in goroutines:
 https://gist.github.com/proudlygeek/4a9355bad16a62025a46
 
+Interesting use of PROMPT_COMMAND to hook into the prompt process:
+https://stackoverflow.com/a/37397271
+
 */
 
 package main
