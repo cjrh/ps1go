@@ -159,7 +159,7 @@ func generate(input string) (string) {
 }
 
 func main() {
-	fmt.Println("\x1b[31;1mHello, World!\x1b[0m")
+	//fmt.Println("\x1b[31;1mHello, World!\x1b[0m")
 	app := cli.NewApp()
 	app.Name = "ps1go"
 	app.Usage = "PS1 prompt generator"
