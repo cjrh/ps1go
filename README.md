@@ -16,7 +16,7 @@ VENV_ACTIVE='[{{.Green}}{{.Virtualenv}}{{.Default}}]'
 VENV_NOTACTIVE='{{.Dim}}{{.Dark_gray}}(no venv){{.Default}}'
 VENV="{{if .Virtualenv}}$VENV_ACTIVE {{else}}$VENV_NOTACTIVE {{end}}"
 
-export PS1="\$(ps1go "$VENV \w")"
+export PS1="\$(ps1go "$VENV \w \$ ")"
 ```
 
 The `.Virtualenv` template parameter is built into `ps1go`. It automatically detects whether a 
