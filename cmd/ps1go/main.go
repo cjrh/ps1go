@@ -13,12 +13,15 @@ https://gist.github.com/proudlygeek/4a9355bad16a62025a46
 Interesting use of PROMPT_COMMAND to hook into the prompt process:
 https://stackoverflow.com/a/37397271
 
+"C:\Users\caleb\Downloads\ansi183\x64\ansicon.exe" "G:\Programs\Git\bin\bash.exe" -l -i
+
 */
 
 package main
 
 import (
 	"gopkg.in/urfave/cli.v1"
+
 	"os"
 	"log"
 	"html/template"
@@ -28,6 +31,7 @@ import (
 
 	"path/filepath"
 	"fmt"
+	"github.com/shiena/ansicolor"
 )
 
 func runCommand(cmdline string) (string) {
@@ -92,9 +96,15 @@ func generate(input string) (string) {
 	- shortened version of path, e.g. 1 or 2 chars for each level?
 	 */
 
+	pwd, err := os.Getwd()
+	if err != nil {
+		pwd = "(error)"
+	}
+
 	m := map[string]string{
 		"Branch":     gitBranchOrHash(),
 		"Virtualenv": virtualenv(),
+		"Pwd": pwd,
 
 		"Reset": "\x1b[0m",
 
@@ -168,7 +178,8 @@ func main() {
 		// The STRING \x1b must be replaced with the BYTES 0x1B, which is ESC.
 		// This allows the user to specify formatting information manually.
 		prompt = strings.Replace(prompt, `\x1b`, "\x1b", -1)
-		fmt.Print(prompt)
+		w := ansicolor.NewAnsiColorWriter(os.Stdout)
+		fmt.Fprint(w, prompt)
 		//os.Stdout.Write([]byte(prompt))
 	}
 
