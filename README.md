@@ -7,9 +7,24 @@ PS1 prompt generator
 Download the `ps1go` executable for your platform, place it on your shell path, and set your `PS1` environment
 variable to call the executable with your customized template.
 
-For example:
+For example, here's an example that works with a Python 
+virtual environment:
 
-TBD
+```bash
+# .bash_profile
+VENV_ACTIVE='[{{.Green}}{{.Virtualenv}}{{.Default}}]'
+VENV_NOTACTIVE='{{.Dim}}{{.Dark_gray}}(no venv){{.Default}}'
+VENV="{{if .Virtualenv}}$VENV_ACTIVE {{else}}$VENV_NOTACTIVE {{end}}"
+
+export PS1="\$(ps1go "$VENV \w")"
+```
+
+The `.Virtualenv` template parameter is built into `ps1go`. It automatically detects whether a 
+Python virtual environment has been activated, and if so, sets the value of `{{.Virtualenv}}` to 
+be the name of the activated virtualenv.
+
+The if-statement syntax is all built into the _Go_ `text/template` package, and has its own
+language. Refer to that documentation to see how to use it.
 
 # Background
 
@@ -53,3 +68,42 @@ This is a pretty complicated prompt because, in addition of having color codes, 
 of a git repo that you might happen to be inside.
 
 We do the same thing, but you call `ps1go` instead of `__git_ps1` (or any other executable).
+
+# Extended example
+
+```bash
+
+# Dislay current git branch - built into ps1go
+BRANCH='{{.Red}}{{.Branch}}{{.Default}}'
+
+# Virtualenv support, building up a template from smaller pieces
+V1='[{{.Green}}{{.Virtualenv}}{{.Default}}]'
+V0='{{.Dim}}{{.Dark_gray}}(no venv){{.Default}}'
+VENV="{{if .Virtualenv}}$V1 {{else}}$V0 {{end}}"
+
+# Current user, with own color - this uses built-in PS1 format code \u
+USER="{{.Light_blue}}\u{{.Default}}"
+
+jobscount () {
+    # Example of calling a bash function from your PS1.
+    local count=$(eval 'jobs -p | wc -l')
+    # Conditionally emit template text if the background jobs count is
+    # greater than zero
+    if [ $count -gt 0 ]
+    then
+        echo " {{.Blue}}jobs:$count{{.Default}}"
+    fi
+}
+
+fpath () {
+    # Current directory, with a color, also uses built-in PS1 code \w
+    echo "{{.Yellow}}\w{{.Default}}"
+}
+
+export PS1="\$(ps1go \"$USER:\h:$(fpath) $VENV$BRANCH$(jobswrite) \n$ \")"
+```
+
+Links
+-----
+
+https://www.gnu.org/software/bash/manual/html_node/Controlling-the-Prompt.html#Controlling-the-Prompt
